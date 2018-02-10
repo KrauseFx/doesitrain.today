@@ -1,12 +1,42 @@
 require_relative './telegram_handler'
+require_relative './weather'
 
 task :morning do
   Database.database[:users].each do |current_user|
-    TelegramHandler.perform_with_bot do |bot|
-      bot.api.send_message(
-        chat_id: current_user[:chat_id],
-        text: "Hi there #{current_user[:lat]}"
-      )
+    begin
+      if current_user[:lat].nil? || current_user[:lng].nil?
+        TelegramHandler.perform_with_bot do |bot|
+          bot.api.send_message(
+            chat_id: current_user[:chat_id],
+            text: "Looks like you didn't send us your location yet, either share it using Telegram, or just type the city + country name here"
+          )
+        end
+        next
+      end
+
+      # Get the weather here
+      rain = Weather.will_it_rain?(lat: current_user[:lat], lng: current_user[:lng])
+
+      unless rain # we only want to notify about rain, not about not rain
+        # TODO: just for debugging
+        TelegramHandler.perform_with_bot do |bot|
+          bot.api.send_message(
+            chat_id: current_user[:chat_id],
+            text: "No rain today 🌂"
+          )
+        end
+        next
+      end
+
+      TelegramHandler.perform_with_bot do |bot|
+        bot.api.send_message(
+          chat_id: current_user[:chat_id],
+          text: "It will probably rain today, don't forget an umbrella ☔️"
+        )
+      end
+    rescue => ex
+      puts ex.to_s
+      puts(ex.backtrace.join("\n"))
     end
   end
 end
