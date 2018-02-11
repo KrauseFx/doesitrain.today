@@ -73,7 +73,7 @@ class TelegramHandler
             text: [
               "✅ Success! From now on, we're using #{location['name']} in #{location['country']} for your weather reports",
               "Current weather: #{current_weather}",
-              "You're all set, we'll message you in the morning of each day if it will rain today"
+              "⚠️ Please let us know what time you want to receive your message by replying here"
             ].join("\n\n"))
         end
       end
