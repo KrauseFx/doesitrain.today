@@ -1,9 +1,12 @@
 require 'telegram/bot'
+require 'tempfile'
 require_relative "./database"
 require_relative "./weather"
 
 class TelegramHandler
   def self.listen
+    puts "Starting listening to Telegram messages..."
+
     self.perform_with_bot do |bot|
       bot.listen do |message|
         begin
@@ -50,7 +53,8 @@ class TelegramHandler
         bot.api.send_message(chat_id: message.chat.id, text: "Sad to see you go. Just text me with `/start` to get started again. Byeeee")
     elsif message.text.start_with?("/stats")
       number_of_users = Database.database[:users].count
-      bot.api.send_message(chat_id: message.chat.id, text: "Currently #{number_of_users} users use the @doesitrainbot (it's the best bot)")
+      show_map(message: message, bot: bot)
+      bot.api.send_message(chat_id: message.chat.id, text: "Currently #{number_of_users} users use the @doesitrainbot")
     elsif message.text.start_with?("/location")
       if message.text.split(" ").count > 1
         set_weather(message: message, bot: bot)
@@ -63,6 +67,8 @@ class TelegramHandler
       else
         bot.api.send_message(chat_id: message.chat.id, text: "Please use `/time 8` (with `8` being the time you want to get the message for)")
       end
+    elsif message.text.start_with?("/map")
+      show_map(message: message, bot: bot)
     elsif message.text.downcase.include?("thank")
       bot.api.send_message(chat_id: message.chat.id, text: "Always here for you!")
     else
@@ -104,6 +110,23 @@ class TelegramHandler
     )
     bot.api.send_message(chat_id: message.chat.id, 
         text: "✅ Nice! We'll send you a rain alert right before #{hour_to_send}am if it will rain that day ☔️")
+  end
+
+  def self.show_map(message: nil, bot: nil)
+    file = Tempfile.new("graph")
+    file_path = "#{file.path}.png"
+
+    google_url = "https://maps.googleapis.com/maps/api/staticmap?center=Spain&size=640x320&scale=2&maptype=roadmap&zoom=2"
+    all_markers = Database.database[:users].all.keep_if{|u|!u[:lat].nil?}.collect{ |u| "#{u[:lat].round(2)},#{u[:lng].round(2)}" }.join("%7C")
+    markers = "&markers=#{all_markers}"
+    key = "&key=#{ENV['GOOGLE_MAPS_API_KEY']}"
+    full_url = [google_url, markers, key].join("")
+    puts full_url
+    File.write(file_path, open(full_url).read)
+    bot.api.send_photo(
+      chat_id: message.chat.id, 
+      photo: Faraday::UploadIO.new(file_path, 'image/png')
+    )
   end
 
   def self.set_weather(bot: nil, message: nil)
