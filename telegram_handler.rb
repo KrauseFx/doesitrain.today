@@ -56,12 +56,12 @@ class TelegramHandler
         current_user(chat_id: message.chat.id).delete
         bot.api.send_message(chat_id: message.chat.id, text: "Sad to see you go. Just text me with `/start` to get started again. Byeeee")
       else
-        location = message.text
-        result = Weather.fetch_weather(location: location)
+        location_txt = message.text
+        result = Weather.fetch_weather(location: location_txt)
         location = (result || {})["location"]
         if location.nil? || location["lat"].nil?
           bot.api.send_message(chat_id: message.chat.id, 
-            text: "💥 Sorry, I couldn't find a location named '#{location}', please make sure to enter the city with correct spelling, or share your location using Telegram")
+            text: "💥 Sorry, I couldn't find a location named '#{location_txt}', please make sure to enter the city with correct spelling, or share your location using Telegram")
         else
           # Valid user input
           current_user(chat_id: message.chat.id).update(
