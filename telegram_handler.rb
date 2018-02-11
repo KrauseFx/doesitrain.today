@@ -38,12 +38,14 @@ class TelegramHandler
       result = Weather.fetch_weather(location: "#{u[:lat]},#{u[:lng]}")
       location = (result || {})["location"]
       time_diff = ((Time.parse(location["localtime"]) - Time.now) / 60.0 / 60.0).round
+      resulting_number = hour_to_send - time_diff
+      resulting_number -= 24 if resulting_number > 24
 
       current_user(chat_id: message.chat.id).update(
-        hour_to_send: hour_to_send - time_diff
+        hour_to_send: resulting_number
       )
       bot.api.send_message(chat_id: message.chat.id, 
-          text: "🕐 Nice, from now on we'll send you the weather report at #{hour_to_send} in your time zone")
+          text: "🕐 Nice, from now on we'll send you the weather report at #{hour_to_send}am in your time zone")
       return
     end
 
