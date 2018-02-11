@@ -29,9 +29,9 @@ class TelegramHandler
       hour_to_send = message.text.to_i
 
       if hour_to_send < 4 || hour_to_send > 11
-        # bot.api.send_message(chat_id: message.chat.id, 
-        #   text: "💥 Sorry, please provide a time between 4am and 11am")
-        # return
+        bot.api.send_message(chat_id: message.chat.id, 
+          text: "💥 Sorry, please provide a time between 4am and 11am")
+        return
       end
 
       u = current_user(chat_id: message.chat.id).first
