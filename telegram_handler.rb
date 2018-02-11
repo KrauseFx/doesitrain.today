@@ -63,6 +63,8 @@ class TelegramHandler
       else
         bot.api.send_message(chat_id: message.chat.id, text: "Please use `/time 8` (with `8` being the time you want to get the message for)")
       end
+    elsif message.text.downcase.include?("thank")
+      bot.api.send_message(chat_id: message.chat.id, text: "Always here for you!")
     else
       text = [
         "Hey there, this bot is pretty basic so far, all I understand is:",
