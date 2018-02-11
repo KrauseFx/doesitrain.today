@@ -6,7 +6,12 @@ class TelegramHandler
   def self.listen
     self.perform_with_bot do |bot|
       bot.listen do |message|
-        handle_message(bot, message)
+        begin
+          handle_message(bot, message)
+        rescue => ex
+          puts ex.to_s
+          puts(ex.backtrace.join("\n"))
+        end
       end
     end
   end

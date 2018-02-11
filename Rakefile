@@ -34,7 +34,7 @@ task :hourly do
       TelegramHandler.perform_with_bot do |bot|
         bot.api.send_message(
           chat_id: current_user[:chat_id],
-          text: "It will probably rain today, don't forget an umbrella ☔️"
+          text: "☔ It will probably rain today - bring an umbrella"
         )
       end
     rescue => ex
