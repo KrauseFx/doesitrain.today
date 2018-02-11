@@ -52,7 +52,7 @@ class TelegramHandler
     case message.text
       when '/start'
         bot.api.send_message(
-          chat_id: chat_id,
+          chat_id: message.chat.id,
           text: "Hey #{message.chat.first_name} #{message.chat.last_name} 👋\n\nPlease either share your location, or enter your current city & country, so we can find the weather for you"
         )
       when '/stop'
