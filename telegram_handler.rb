@@ -26,6 +26,11 @@ class TelegramHandler
         lat: message.location.latitude,
         lng: message.location.longitude
       )
+      bot.api.send_message(chat_id: message.chat.id, 
+            text: [
+              "✅ Location received",
+              "🕣 What time do you usually leave your house in the morning?"
+            ].join("\n\n"))
       return 
     end
 
