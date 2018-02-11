@@ -1,7 +1,7 @@
 require_relative './telegram_handler'
 require_relative './weather'
 
-task :morning do
+task :hourly do
   Database.database[:users].each do |current_user|
     begin
       if current_user[:lat].nil? || current_user[:lng].nil?
@@ -13,6 +13,9 @@ task :morning do
         end
         next
       end
+
+      puts "#{current_user[:hour_to_send]} != #{Time.now.hour}"
+      next if current_user[:hour_to_send].to_i != Time.now.hour.to_i
 
       # Get the weather here
       rain = Weather.will_it_rain?(lat: current_user[:lat], lng: current_user[:lng])

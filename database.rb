@@ -10,6 +10,7 @@ class Database
         Integer :chat_id
         Float :lat
         Float :lng
+        String :hour_to_send
       end
     end
 
