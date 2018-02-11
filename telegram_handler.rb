@@ -45,7 +45,7 @@ class TelegramHandler
         hour_to_send: resulting_number
       )
       bot.api.send_message(chat_id: message.chat.id, 
-          text: "🕐 Nice, from now on we'll send you the weather report at #{hour_to_send}am in your time zone")
+          text: "🕐 Nice, from now on we'll send you the weather report a few minutes after #{hour_to_send}am in your time zone")
       return
     end
 
