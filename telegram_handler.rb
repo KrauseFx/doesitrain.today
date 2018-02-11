@@ -116,7 +116,7 @@ class TelegramHandler
     file = Tempfile.new("graph")
     file_path = "#{file.path}.png"
 
-    google_url = "https://maps.googleapis.com/maps/api/staticmap?center=Spain&size=640x320&scale=2&maptype=roadmap&zoom=2"
+    google_url = "https://maps.googleapis.com/maps/api/staticmap?center=Spain&size=640x300&scale=2&maptype=roadmap&zoom=1"
     all_markers = Database.database[:users].all.keep_if{|u|!u[:lat].nil?}.collect{ |u| "#{u[:lat].round(2)},#{u[:lng].round(2)}" }.join("%7C")
     markers = "&markers=#{all_markers}"
     key = "&key=#{ENV['GOOGLE_MAPS_API_KEY']}"
