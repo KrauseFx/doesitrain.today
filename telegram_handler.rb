@@ -72,6 +72,10 @@ class TelegramHandler
         number_of_users = Database.database[:users].count
         bot.api.send_message(chat_id: message.chat.id, text: "Currently #{number_of_users} users use the @doesitrainbot (it's the best bot)")
       else
+        if message.text.start_with?("/")
+          bot.api.send_message(chat_id: message.chat.id, text: "Currently only `/start`, `/stop` and `/stats` are supported")
+          return
+        end
         location_txt = message.text
         result = Weather.fetch_weather(location: location_txt)
         location = (result || {})["location"]
