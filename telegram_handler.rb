@@ -51,7 +51,10 @@ class TelegramHandler
 
     case message.text
       when '/start'
-        # already handled
+        bot.api.send_message(
+          chat_id: chat_id,
+          text: "Hey #{message.chat.first_name} #{message.chat.last_name} 👋\n\nPlease either share your location, or enter your current city & country, so we can find the weather for you"
+        )
       when '/stop'
         current_user(chat_id: message.chat.id).delete
         bot.api.send_message(chat_id: message.chat.id, text: "Sad to see you go. Just text me with `/start` to get started again. Byeeee")
@@ -96,11 +99,6 @@ class TelegramHandler
       lng: nil,
       hour_to_send: 8
     })
-
-    bot.api.send_message(
-      chat_id: chat_id,
-      text: "Hey #{message.chat.first_name} #{message.chat.last_name} 👋\n\nPlease either share your location, or enter your current city & country, so we can find the weather for you"
-    )
   end
 
   def self.perform_with_bot
