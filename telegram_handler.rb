@@ -55,6 +55,9 @@ class TelegramHandler
       when '/stop'
         current_user(chat_id: message.chat.id).delete
         bot.api.send_message(chat_id: message.chat.id, text: "Sad to see you go. Just text me with `/start` to get started again. Byeeee")
+      when '/stats'
+        number_of_users = Database.database[:users].count
+        bot.api.send_message(chat_id: message.chat.id, text: "Currently #{number_of_users} users use the @doesitrainbot (it's the best bot)")
       else
         location_txt = message.text
         result = Weather.fetch_weather(location: location_txt)
