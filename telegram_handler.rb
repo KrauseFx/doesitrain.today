@@ -38,14 +38,14 @@ class TelegramHandler
       result = Weather.fetch_weather(location: "#{u[:lat]},#{u[:lng]}")
       location = (result || {})["location"]
       time_diff = ((Time.parse(location["localtime"]) - Time.now) / 60.0 / 60.0).round
-      resulting_number = hour_to_send - time_diff
+      resulting_number = hour_to_send - time_diff - 1 # we want to warn the user **before** they leave the house
       resulting_number -= 24 if resulting_number >= 24
 
       current_user(chat_id: message.chat.id).update(
         hour_to_send: resulting_number
       )
       bot.api.send_message(chat_id: message.chat.id, 
-          text: "✅ Nice, from now on we'll send you the weather report a few minutes after #{hour_to_send}am in your time zone")
+          text: "✅ Nice! We'll send you a rain alert right before #{hour_to_send}am if it will rain today ☔️")
       return
     end
 
@@ -53,7 +53,7 @@ class TelegramHandler
       when '/start'
         bot.api.send_message(
           chat_id: message.chat.id,
-          text: "Hey #{message.chat.first_name} #{message.chat.last_name} 👋\n\nPlease either share your location, or enter your current city & country, so we can find the weather for you"
+          text: "Hey #{message.chat.first_name} #{message.chat.last_name} 👋\n\nWelcome to @DoesItRainBot, never be surprised by rain again\n\nPlease either share your location, or enter your current city & country, so we can find the weather for you"
         )
       when '/stop'
         current_user(chat_id: message.chat.id).delete
@@ -75,11 +75,12 @@ class TelegramHandler
             lng: location["lon"] # lol `lon`
           )
           current_weather = result["current"]["condition"]["text"]
+          country = location['country'].gsub("United States of America", "USA")
           bot.api.send_message(chat_id: message.chat.id, 
             text: [
-              "✅ Success! From now on, we're using #{location['name']} in #{location['country']} for your weather reports",
+              "✅ From now on, we're using #{location['name']} in #{country} for your rain alerts",
               "Current weather: #{current_weather}",
-              "🕣 Please let us know what time you want to receive your message by replying here"
+              "🕣 What time do you usually leave your house in the morning?"
             ].join("\n\n"))
         end
       end
