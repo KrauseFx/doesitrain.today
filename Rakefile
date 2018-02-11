@@ -20,16 +20,7 @@ task :hourly do
       # Get the weather here
       rain = Weather.will_it_rain?(lat: current_user[:lat], lng: current_user[:lng])
 
-      unless rain # we only want to notify about rain, not about not rain
-        # TODO: just for debugging
-        TelegramHandler.perform_with_bot do |bot|
-          bot.api.send_message(
-            chat_id: current_user[:chat_id],
-            text: "No rain today 🌂"
-          )
-        end
-        next
-      end
+      next unless rain # we only want to notify about rain, not about not rain
 
       TelegramHandler.perform_with_bot do |bot|
         bot.api.send_message(
