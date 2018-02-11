@@ -39,7 +39,7 @@ class TelegramHandler
       location = (result || {})["location"]
       time_diff = ((Time.parse(location["localtime"]) - Time.now) / 60.0 / 60.0).round
       resulting_number = hour_to_send - time_diff
-      resulting_number -= 24 if resulting_number > 24
+      resulting_number -= 24 if resulting_number >= 24
 
       current_user(chat_id: message.chat.id).update(
         hour_to_send: resulting_number
