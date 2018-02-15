@@ -14,11 +14,11 @@ task :hourly do
         next
       end
 
-      puts "#{current_user[:hour_to_send]} != #{Time.now.hour}"
       next if current_user[:hour_to_send].to_i != Time.now.hour.to_i
 
       # Get the weather here
       rain = Weather.will_it_rain?(lat: current_user[:lat], lng: current_user[:lng])
+      puts "#{current_user[:lat]},#{current_user[:lng]}: #{rain}"
 
       next unless rain # we only want to notify about rain, not about not rain
 
