@@ -15,8 +15,21 @@ class Weather
     result = self.fetch_weather(location: "#{lat},#{lng}")
     if result && result["current"]
       today = result["current"]
-      return today["condition"]["text"].downcase.include?("rain")
+      self.rain_conditions.each do |current_condition|
+        return true if today["condition"]["text"].downcase.include?(current_condition)
+      end
     end
-    return nil
+    return false
+  end
+
+  def self.rain_conditions
+    [
+      "rain",
+      "drizzle",
+      "snow",
+      "shower",
+      "ice",
+      "thunder"
+    ]
   end
 end
