@@ -101,12 +101,11 @@ class TelegramHandler
     u = current_user(chat_id: message.chat.id).first
     result = Weather.fetch_weather(location: "#{u[:lat]},#{u[:lng]}")
     location = (result || {})["location"]
-    time_diff = ((Time.parse(location["localtime"]) - Time.now) / 60.0 / 60.0).round
-    resulting_number = hour_to_send - time_diff - 1 # we want to warn the user **before** they leave the house
-    resulting_number -= 24 if resulting_number >= 24
+    timezone = (location || {})["tz_id"]
 
     current_user(chat_id: message.chat.id).update(
-      hour_to_send: resulting_number
+      hour_to_send: hour_to_send - 1, # we want to warn the user **before** they leave the house
+      timezone: timezone
     )
     bot.api.send_message(chat_id: message.chat.id, 
         text: "✅ Nice! We'll send you a rain alert right before #{hour_to_send}am if it will rain that day ☔️")
