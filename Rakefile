@@ -1,3 +1,4 @@
+require 'tzinfo'
 require_relative './telegram_handler'
 require_relative './weather'
 
@@ -13,8 +14,13 @@ task :hourly do
         end
         next
       end
+      if (!!current_user[:timezone])
+        reference_time = TZInfo::Timezone.get(current_user[:timezone]).now
+      else
+        reference_time = Time.now
+      end
 
-      next if current_user[:hour_to_send].to_i != Time.now.hour.to_i
+      next if current_user[:hour_to_send].to_i != reference_time.hour.to_i
 
       # Get the weather here
       rain = Weather.will_it_rain?(lat: current_user[:lat], lng: current_user[:lng])

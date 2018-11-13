@@ -11,6 +11,7 @@ class Database
         Float :lat
         Float :lng
         String :hour_to_send
+        String :timezone
       end
     end
 
